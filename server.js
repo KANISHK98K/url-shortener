@@ -34,9 +34,10 @@ app.post("/shorten", async (req, res) => {
     // Check if URL already exists
     let url = await Url.findOne({ originalUrl });
 
+    // ...existing code...
     if (url) {
       return res.json({
-        shortUrl: ${req.protocol}://${req.get("host")}/${url.shortId}
+        shortUrl: `${req.protocol}://${req.get("host")}/${url.shortId}`
       });
     }
 
@@ -50,8 +51,9 @@ app.post("/shorten", async (req, res) => {
     await url.save();
 
     res.json({
-      shortUrl: ${req.protocol}://${req.get("host")}/${shortId}
+      shortUrl: `${req.protocol}://${req.get("host")}/${shortId}`
     });
+// ...existing code...
 
   } catch (err) {
     res.status(500).json({ error: "Server error" });
