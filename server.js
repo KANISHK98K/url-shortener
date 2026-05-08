@@ -5,7 +5,7 @@ const shortid = require("shortid");
 const cors = require("cors");
 const path = require("path");
 
-app.use(express.static(__dirname));
+
 
 // ✅ IMPORTANT: Import model
 const Url = require("./models/Url");
@@ -13,12 +13,9 @@ const Url = require("./models/Url");
 const app = express();
 
 // ✅ Middleware
+app.use(express.static(__dirname));
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
 
 // ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -26,6 +23,9 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log(err));
 
 // ✅ Create Short URL
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 app.post("/shorten", async (req, res) => {
   try {
     const { originalUrl } = req.body;
@@ -35,7 +35,7 @@ app.post("/shorten", async (req, res) => {
 
     if (url) {
       return res.json({
-        shortUrl: `${req.protocol}://${req.get("host")}/${shortId}`
+        shortUrl: `${req.protocol}://${req.get("host")}/${url.shortId}`
       });
     }
 
