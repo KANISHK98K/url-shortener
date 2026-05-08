@@ -1,7 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const shortid = require("shortid");
 const cors = require("cors");
+const path = require("path");
+
+app.use(express.static(__dirname));
 
 // ✅ IMPORTANT: Import model
 const Url = require("./models/Url");
@@ -11,9 +15,13 @@ const app = express();
 // ✅ Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
 // ✅ MongoDB Connection
-mongoose.connect("mongodb://127.0.0.1:27017/urlshortener")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
@@ -27,7 +35,7 @@ app.post("/shorten", async (req, res) => {
 
     if (url) {
       return res.json({
-        shortUrl: `http://localhost:3000/${url.shortId}`,
+        shortUrl: `${req.protocol}://${req.get("host")}/${shortId}`
       });
     }
 
