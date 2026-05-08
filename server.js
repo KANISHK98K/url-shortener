@@ -1,33 +1,34 @@
 require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const shortid = require("shortid");
 const cors = require("cors");
 const path = require("path");
 
-
-
-// ✅ IMPORTANT: Import model
 const Url = require("./models/Url");
 
 const app = express();
 
-// ✅ Middleware
+// Middleware
 app.use(express.static(__dirname));
 app.use(cors());
 app.use(express.json());
 
-// ✅ MongoDB Connection
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.log(err));
 
-// ✅ Create Short URL
+// Homepage Route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
+
+// Create Short URL
 app.post("/shorten", async (req, res) => {
   try {
+
     const { originalUrl } = req.body;
 
     // Check if URL already exists
@@ -35,7 +36,7 @@ app.post("/shorten", async (req, res) => {
 
     if (url) {
       return res.json({
-        shortUrl: `${req.protocol}://${req.get("host")}/${url.shortId}`
+        shortUrl: ${req.protocol}://${req.get("host")}/${url.shortId}
       });
     }
 
@@ -49,7 +50,7 @@ app.post("/shorten", async (req, res) => {
     await url.save();
 
     res.json({
-      shortUrl: `http://localhost:3000/${shortId}`,
+      shortUrl: ${req.protocol}://${req.get("host")}/${shortId}
     });
 
   } catch (err) {
@@ -57,22 +58,26 @@ app.post("/shorten", async (req, res) => {
   }
 });
 
-// ✅ Redirect to original URL
+// Redirect to original URL
 app.get("/:shortId", async (req, res) => {
   try {
-    const url = await Url.findOne({ shortId: req.params.shortId });
+
+    const url = await Url.findOne({
+      shortId: req.params.shortId
+    });
 
     if (url) {
       return res.redirect(url.originalUrl);
     } else {
       return res.status(404).send("URL not found");
     }
+
   } catch (err) {
     res.status(500).send("Server error");
   }
 });
 
-// ✅ Start Server
+// Start Server
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
