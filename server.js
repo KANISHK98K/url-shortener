@@ -78,6 +78,9 @@ app.get("/:shortId", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+app.get("/", (req, res) => {
+  res.send("URL Shortener API is running 🚀");
+});
 
 // Start Server
 app.listen(3000, () => {
