@@ -1,37 +1,97 @@
-<<!DOCTYPE html>
-<html>
-<head>
-  <title>URL Shortener</title>
-</head>
-<body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 0 16px;
+      }
+      input {
+        width: 70%;
+        padding: 8px;
+        font-size: 14px;
+      }
+      button {
+        padding: 8px 16px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #result {
+        margin-top: 16px;
+        font-size: 14px;
+      }
+      #error {
+        margin-top: 12px;
+        color: red;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>URL Shortener</h2>
 
-<h2>URL Shortener</h2>
+    <form id="form">
+      <input type="url" id="url" placeholder="https://example.com" required />
+      <button type="submit" id="btn">Shorten</button>
+    </form>
 
-<form id="form">
-  <input type="text" id="url" placeholder="Enter URL" required />
-  <button type="submit">Shorten</button>
-</form>
+    <p id="result"></p>
+    <p id="error"></p>
 
-<p id="result"></p>
+    <script>
+      document.getElementById("form").onsubmit = async (e) => {
+        e.preventDefault();
 
-<script>
-document.getElementById("form").onsubmit = async (e) => {
-  e.preventDefault();
+        const urlInput = document.getElementById("url");
+        const btn = document.getElementById("btn");
+        const resultEl = document.getElementById("result");
+        const errorEl = document.getElementById("error");
 
-  const url = document.getElementById("url").value;
+        // Reset UI
+        resultEl.textContent = "";
+        errorEl.textContent = "";
+        btn.disabled = true;
+        btn.textContent = "Shortening...";
 
-  const res = await fetch("https://url-shortener-1-xhlg.onrender.com/shorten", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ originalUrl: url })
-  });
+        try {
+          const res = await fetch("/shorten", { // ✅ relative URL, works everywhere
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ originalUrl: urlInput.value }),
+          });
 
-  const data = await res.json();
+          const data = await res.json();
 
-  document.getElementById("result").innerHTML =
-    `<a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a>`;
-};
-</script>
+          if (!res.ok || data.error) {
+            // ✅ Handle server-side errors
+            errorEl.textContent = data.error || "Something went wrong.";
+            return;
+          }
 
-</body>
+          // ✅ Safe DOM creation instead of innerHTML
+          const link = document.createElement("a");
+          link.href = data.shortUrl;
+          link.textContent = data.shortUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer"; // ✅ security best practice for target="_blank"
+
+          resultEl.textContent = "Short URL: ";
+          resultEl.appendChild(link);
+
+          urlInput.value = ""; // ✅ Clear input after success
+
+        } catch (err) {
+          errorEl.textContent = "Network error. Is the server running?";
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Shorten";
+        }
+      };
+    </script>
+  </body>
 </html>
