@@ -16,9 +16,11 @@ app.use(express.static(path.join(__dirname, "public"))); // ✅ serve only the p
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
-
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err.message); // ✅ logs the real reason
+    process.exit(1); // stop server if DB fails
+  });
 // Homepage Route
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html")); // ✅ updated path
