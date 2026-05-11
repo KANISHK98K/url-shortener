@@ -55,9 +55,11 @@ app.post("/shorten", async (req, res) => {
     });
 // ...existing code...
 
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+ } catch (err) {
+  console.error(err);
+
+  res.status(500).send(err.message);
+}
 });
 
 // Redirect to original URL
@@ -74,15 +76,18 @@ app.get("/:shortId", async (req, res) => {
       return res.status(404).send("URL not found");
     }
 
-  } catch (err) {
-    res.status(500).send("Server error");
-  }
-});
-app.get("/", (req, res) => {
-  res.send("URL Shortener API is running 🚀");
+ } catch (err) {
+  console.error(err);
+  res.status(500).json({
+    error: err.message
+  });
+}
 });
 
+
 // Start Server
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
