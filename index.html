@@ -20,7 +20,7 @@ document.getElementById("form").onsubmit = async (e) => {
 
   const url = document.getElementById("url").value;
 
-  const res = await fetch("http://localhost:3000/shorten", {
+  const res = await fetch("https://url-shortener-1-xhlg.onrender.com/shorten", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ originalUrl: url })
