@@ -1,8 +1,14 @@
 # 🔗 URL Shortener
 
+
 A simple URL shortener web app built with **Node.js**, **Express**, **MongoDB**, and vanilla **HTML/CSS/JS**. Deployed on [Render](https://render.com).
 
 ---
+
+## 💡 Got the idea from
+[roadmap.sh - URL Shortening Service](https://roadmap.sh/projects/url-shortening-service)
+
+___
 
 ## 🚀 Live Demo
 
